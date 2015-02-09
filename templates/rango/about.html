@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 
-{% load static %}
-
 <html>
 
     <head>
@@ -12,12 +10,18 @@
     </head>
 
     <body>
-        <h1>
-			This has been written by Timothy Ness 2073036n
-		</h1>
-        <img src="{% static "images/timothy.jpg" %}" alt="Picture of Timothy Ness" HEIGHT = "500" WIDTH = "700"/>
+	
+	{% extends 'base.html' %}
+
+	{% load staticfiles %}
+
+	{% block body_block %}
+    <h1>{{ "This has been written by Timothy Ness 2073036n" }}</h1>
     
-		<a href="http://127.0.0.1:8000/rango/">Index</a>
+	<img src="{% static "images/timothy.jpg" %}" alt="Picture of Timothy Ness" HEIGHT = "500" WIDTH = "700"/>
+
+{% endblock %}
+
 	</body>
 
 </html>
