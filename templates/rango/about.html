@@ -16,11 +16,14 @@
 	{% load staticfiles %}
 
 	{% block body_block %}
-		<h1>{{ "This has been written by Timothy Ness 2073036n" }}</h1>
-    
-		<img src="{% static "images/timothy.jpg" %}" alt="Picture of Timothy Ness" HEIGHT = "500" WIDTH = "700"/>
-
-		<h2>You have visited this site {{visits}} times.</h2>
+		<div class="page-header">
+            <h1>About</h1>
+        </div>
+		<div>
+			<h1>{{ "This has been written by Timothy Ness 2073036n" }}</h1>
+			<h2>You have visited this site {{visits}} times.</h2>
+			<img src="{% static "images/timothy.jpg" %}" alt="Picture of Timothy Ness" HEIGHT = "500" WIDTH = "700"/>
+		</div>
 		
 	{% endblock %}
 
