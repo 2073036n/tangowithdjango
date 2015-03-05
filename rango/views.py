@@ -12,6 +12,8 @@ from django.contrib.auth import logout
 from datetime import datetime
 from django.contrib.auth.models import User
 from rango.bing_search import run_query
+from django.shortcuts import redirect
+from rango.models import UserProfile
 
 def index(request):
     
@@ -72,7 +74,17 @@ def category(request, category_name_slug):
 
     # Create a context dictionary which we can pass to the template rendering engine.
     context_dict = {}
+    
+    result_list = []
 
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Run our Bing function to get the results list!
+            result_list = run_query(query)
+            context_dict['search'] = result_list
+            
     try:
         # Can we find a category name slug with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.
@@ -82,7 +94,7 @@ def category(request, category_name_slug):
 
         # Retrieve all of the associated pages.
         # Note that filter returns >= 1 model instance.
-        pages = Page.objects.filter(category=category)
+        pages = Page.objects.filter(category=category).order_by('-views')
 
         # Adds our results list to the template context under name pages.
         context_dict['pages'] = pages
@@ -261,16 +273,60 @@ def user_logout(request):
 def restricted(request):
     return HttpResponse("Since you're logged in, you can see this text!")
 
+def track_urls(request):
+    page_id = None
+    url = '/rango/'
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            try:
+                page = Page.objects.get(id=page_id)
+                page.views = page.views + 1
+                page.save()
+                url = page.url
+            except:
+                pass
 
-def search(request):
+    return redirect(url)
 
-    result_list = []
-
+def register_profile(request):
     if request.method == 'POST':
-        query = request.POST['query'].strip()
+        form = UserProfileForm(request.POST)
 
-        if query:
-            # Run our Bing function to get the results list!
-            result_list = run_query(query)
+        if form.is_valid():
+            form.save(commit=True)
 
-    return render(request, 'rango/search.html', {'result_list': result_list})
+            return index(request)
+        else:
+            print form.errors
+    else:
+        form = UserProfileForm()
+
+    return render(request, 'rango/profile_registration.html', {'form': form})
+
+def profile(request):
+    if request.method == 'GET':
+        return render(request,'rango/profile.html',{})
+    elif request.method == 'POST':
+        owner = User.objects.get (id=request.user.id)
+        user_profile = UserProfile(id = request.user.id)
+        newusername = request.POST['username']
+        if newusername != "":
+            owner.username = newusername
+            owner.save()
+        newemail = request.POST['email']
+        if newemail != "":
+            owner.email = newemail
+            owner.save()
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if (password1 == password2 and password1 != ""):
+            owner.set_password(password1)
+            owner.save()
+        newwebsite = request.POST['website']
+        if newwebsite != "":
+            user_profile.website = newwebsite
+            owner.save()
+        return render(request,'rango/profile.html',{})
+
+    

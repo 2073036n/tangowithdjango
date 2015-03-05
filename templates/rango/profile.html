@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+	{% extends 'base.html' %}
+	
+	{% block body_block %}
+		<h1>User Profile: {{ user.username }}</h1>
+		
+		<div>
+		
+		<form id="UserProfileForm" method="post" action="/rango/profile/"
+					enctype="multipart/form-data">
+	
+		{% csrf_token %}
+		<div class="form-group" >
+			<p class="required"> <label for="id_username">Username:</label>
+			<input class="form-control"  id="id_username" maxlength="30" name="username" type="text"  placeholder={{user.username}}></p>
+		</div>
+			
+		<div class="form-group" >
+			<p class="required"> <label for="id_email">E-mail:</label>
+			<input class="form-control"  id="id_email" maxlength="30" name="email" type="email"  placeholder={{user.email}}></p>
+		</div>
+
+		<h4>ChangePassword:</h4>
+		<div class="form-group">
+			<p class="required"><label for="id_password1">Password:</label>
+			<input class="form-control" id="id_password1" name="password1" type="password" placeholder="Enter password" /></p>
+		</div>
+		<div class="form-group">
+			<p class="required"><label for="id_password2">Password (again):</label>
+			<input class="form-control" id="id_password2" name="password2" type="password" placeholder="Enter password again" /></p>
+		</div>
+		
+		<div class="form-group" >
+			<p class="required"> <label for="id_website">Website:</label>
+			<input class="form-control"  id="id_website" maxlength="30" name="website" type="url"  placeholder={{user.website}}></p>
+		</div>
+		
+            <br/>
+			<button class="btn btn-primary" type="submit" name="submit">Submit</button>
+		</form>
+		</div>
+	{% endblock %}
+</body>
+
+</html>
